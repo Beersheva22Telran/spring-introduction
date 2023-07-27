@@ -23,6 +23,8 @@ public class SenderController {
 		String res = "Wrong message type " + message.type;
 		if (sender != null) {
 			res = sender.send(message);
+		} else {
+			log.error(res);
 		}
 		return res;
 	}

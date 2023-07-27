@@ -16,7 +16,7 @@ public class SmsSender implements Sender {
 		String res = "SMS sender have not received SMS Message";
 		if(message instanceof SmsMessage) {
 			SmsMessage smsMessage = (SmsMessage) message;
-			res = String.format("text: %s has been sent to %s", smsMessage.text, smsMessage.phoneNumber);
+			res = String.format("SMS sender - text: %s has been sent to phone %s", smsMessage.text, smsMessage.phoneNumber);
 		} else {
 			log.error("The message has wrong type");
 		}

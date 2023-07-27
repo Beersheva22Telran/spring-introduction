@@ -15,7 +15,7 @@ public class EmailSender implements Sender {
 		String res = "Email sender have not received EmailMessage";
 		if(message instanceof EmailMessage) {
 			EmailMessage emailMessage = (EmailMessage) message;
-			res = String.format("text: %s has been sent to %s", emailMessage.text, emailMessage.emailAddress);
+			res = String.format("email sender -  text: %s has been sent to mail %s", emailMessage.text, emailMessage.emailAddress);
 		}else {
 			log.error("The message has wrong type");
 		}
