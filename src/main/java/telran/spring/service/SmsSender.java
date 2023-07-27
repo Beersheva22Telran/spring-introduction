@@ -19,8 +19,21 @@ public class SmsSender implements Sender {
 			res = String.format("SMS sender - text: %s has been sent to phone %s", smsMessage.text, smsMessage.phoneNumber);
 		} else {
 			log.error("The message has wrong type");
+			throw new IllegalArgumentException(res);
 		}
 		return res;
+	}
+
+	@Override
+	public String getMessageTypeString() {
+		
+		return "sms";
+	}
+
+	@Override
+	public Class<? extends Message> getMessageTypeObject() {
+		
+		return SmsMessage.class;
 	}
 
 }
