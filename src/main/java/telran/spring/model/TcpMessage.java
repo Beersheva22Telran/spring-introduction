@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class TcpMessage extends Message {
 String hostName;
-@Min(1024) @Max(5000)
+@Min(value=1024) @Max(5000)
 int port;
 }

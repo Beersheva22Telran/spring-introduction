@@ -2,10 +2,12 @@ package telran.spring.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,8 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import telran.spring.exceptions.NotFoundException;
 import telran.spring.model.Message;
 import telran.spring.service.Sender;
 
@@ -22,30 +26,40 @@ import telran.spring.service.Sender;
 @RequestMapping("sender")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class SenderController {
 	Map<String, Sender> sendersMap;
 	final List<Sender> sendersList;
 	final ObjectMapper mapper;
 	@PostMapping
-	ResponseEntity<String> send(@RequestBody @Valid Message message) {
+	String send(@RequestBody @Valid Message message) {
 		log.debug("controller received message {}", message);
 		Sender sender = sendersMap.get(message.type);
-		String resWrong = "Wrong message type " + message.type;
-		String resRight = null;
-		ResponseEntity<String> res = ResponseEntity.badRequest().body(resWrong);
+		String resWrong = message.type + " type not found";
+		String res = null;
 		if (sender != null) {
 			
-			try {
-				resRight = sender.send(message);
-				res = ResponseEntity.ok().body(resRight);
-			} catch (Exception e) {
-				res = ResponseEntity.badRequest().body(e.getMessage());
-			}
+				res = sender.send(message);
+		
 			
 		} else {
-			log.error(resWrong);;
+			throw new NotFoundException(resWrong);
 		}
 		return res;
+	}
+	@GetMapping
+	Set<String> getTypes() {
+		return sendersMap.keySet();
+	}
+	@GetMapping("type/{typeName}")
+	boolean isTypeExistsPath(@PathVariable(name="typeName") String type) {
+		log.debug("Type inside a path {}", type);
+		return sendersMap.containsKey(type);
+	}
+	@GetMapping("type")
+	boolean isTypeExistsParam(@RequestParam(name = "type", defaultValue = "") @NotEmpty String type) {
+		log.debug("Type inside a parameter {}", type);
+		return sendersMap.containsKey(type);
 	}
 	@PostConstruct
 	void init() {
