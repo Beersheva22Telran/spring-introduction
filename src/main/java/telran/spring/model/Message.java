@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class Message {
-	@NotEmpty @Pattern(regexp = "[a-z]{3,5}")
+	@NotEmpty @Pattern(regexp = "[a-z]{3,5}", message = "type value mismatches pattern")
 	public String type;
 	@NotEmpty
 	public String text;
