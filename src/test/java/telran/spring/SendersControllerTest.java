@@ -67,11 +67,17 @@ void setUp() {
 		assertNotNull(mockMvc);
 	}
 	@Test
-	@WithMockUser(roles = {"USER", "ADMIN"},username = "admin")
 	void sendRightFlow() throws Exception{
 		String messageJson = mapper.writeValueAsString(message);
 		String response = getRequestBase(messageJson).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 		assertEquals("test", response);
+	}
+	@Test
+	@WithMockUser(roles = {"USER"},username = "admin")
+	void sendFlow403() throws Exception{
+		String messageJson = mapper.writeValueAsString(message);
+		 getRequestBase(messageJson).andExpect(status().isForbidden());
+		
 	}
 
 	private ResultActions getRequestBase(String messageJson) throws Exception {
