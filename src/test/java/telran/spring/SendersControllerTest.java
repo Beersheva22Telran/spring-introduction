@@ -15,12 +15,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.context.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import telran.spring.controller.SenderController;
 import telran.spring.model.Message;
-import telran.spring.security.jwt.JwtSecurityConfiguration;
+import telran.spring.security.jwt.*;
+
 import telran.spring.service.Sender;
 @Service
 class MockSender implements Sender {
@@ -45,7 +47,10 @@ class MockSender implements Sender {
 	
 }
 @WithMockUser(roles = {"USER", "ADMIN"},username = "admin")
-@WebMvcTest({SenderController.class, MockSender.class, JwtSecurityConfiguration.class})
+@WebMvcTest(value={SenderController.class, MockSender.class, SecurityConfiguration.class}, excludeFilters =
+@ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE,
+        classes = JwtFilter.class))
 class SendersControllerTest {
 @Autowired
 	MockMvc mockMvc;
